@@ -10,27 +10,26 @@ import static javax.persistence.GenerationType.AUTO;
 public class Pet {
 
     @Id
-    @GeneratedValue(strategy = AUTO)
-    private int id = 1;
+    @GeneratedValue
+    private long id;
     private int age = 10;
     private String name = "Max";
-    int price = 1000;
+    private int price = 1000;
 
     public Pet(){
 
     }
-    public Pet(int id, String name, int age, int price){
-        this.id = id;
+    public Pet(String name, int age, int price){
         this.name = name;
         this.age = age;
         this.price = price;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

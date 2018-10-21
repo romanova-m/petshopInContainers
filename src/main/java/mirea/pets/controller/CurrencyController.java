@@ -18,7 +18,7 @@ public class CurrencyController {
     @RequestMapping(value = "currency", method = RequestMethod.GET)
 
     @ResponseBody
-    public HashMap<Long, Currency> currency(){
-        return currencyService.currency();
+    public Iterable<Currency> currency(){
+        return currencyService.currencies();
     }
 }

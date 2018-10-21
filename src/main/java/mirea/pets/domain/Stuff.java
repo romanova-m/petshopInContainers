@@ -1,7 +1,15 @@
 package mirea.pets.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Stuff {
-    private int id = 0;
+
+    @Id
+    @GeneratedValue
+    private long id;
     private String name = "Brush";
     private int price = 1000;
 
@@ -9,18 +17,32 @@ public class Stuff {
 
     }
 
-    public Stuff(int id, String name, int price){
-        this.id = id;
+    public Stuff(String name, int price){
         this.name = name;
         this.price = price;
     }
-    public int getId(){
-        return this.id;
+
+    public long getId() {
+        return id;
     }
-    public String getName(){
-        return this.name;
+
+    public void setId(long id) {
+        this.id = id;
     }
-    public int getPrice(){
-        return this.price;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

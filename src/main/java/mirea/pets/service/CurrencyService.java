@@ -1,21 +1,24 @@
 package mirea.pets.service;
 
 import mirea.pets.domain.Currency;
+import mirea.pets.repository.CurrencyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 
 @Component
 public class CurrencyService {
-    private HashMap<Long,Currency> currency = new HashMap<>();
+
+    @Autowired
+    CurrencyRepository currencyRepository;
 
     @PostConstruct
     public void init(){
-        currency.put(Long.valueOf(1) ,new Currency(1,1, 1.5));
+        currencyRepository.save(new Currency(1, 1.5));
     }
 
-    public HashMap<Long, Currency> currency() {
-        return currency;
+    public Iterable<Currency> currencies(){
+        return currencyRepository.findAll();
     }
 }

@@ -2,19 +2,25 @@ package mirea.pets.service;
 
 import mirea.pets.domain.Cart;
 import mirea.pets.domain.Pet;
+import mirea.pets.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Optional;
 
 @Controller
 public class CartService {
-    private HashMap<Long, Cart> map = new HashMap<>();
 
+    private CartRepository cartRepository;
     private BalanceService balanceService;
     private CartService cartService;
+
+    @Autowired
+    public CartService(CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
+    }
 
     @Autowired
     public void setBalanceService(BalanceService balanceService){
@@ -35,13 +41,13 @@ public class CartService {
 
     @PostConstruct
     public void init(){
-        map.put(Long.valueOf(1), new Cart(1,1,1));
-        map.put(Long.valueOf(2), new Cart(2,2,1));
-        map.put(Long.valueOf(3), new Cart(3,1,2));
+        cartRepository.save(new Cart(1,1));
+        cartRepository.save(new Cart(2,1));
+        cartRepository.save(new Cart(1,2));
     }
 
-    public Collection<Cart> cart() {
-        return map.values();
+    public Iterable<Cart> cart() {
+        return cartRepository.findAll();
     }
 
     public void rmAll(long user_id) {
@@ -53,36 +59,35 @@ public class CartService {
     }
 
     public long searchUser(long user_id){
-        for (long id: map.keySet()) {
-            Cart cart = map.get(id);
-            if (cart.getUser_id() == user_id) return id;
+        for (Cart cart: cartRepository.findAll()) {
+            if (cart.getUser_id() == user_id) return cart.getId();
         }
         return -1;
     }
 
     public void del(long id) {
-        map.remove(id);
+        cartRepository.deleteById(id);
     }
 
-    public Cart cartById(long id){
-        return map.get(id);
+    public Optional<Cart> cartById(long id){
+        return cartRepository.findById(id);
     }
 
-    public Cart add(Cart newCart, long id) {
-        map.put(Long.valueOf(id), newCart);
-        return this.cartById(id);
+    public Cart add(Cart cart) {
+        cartRepository.save(cart);
+        return cart;
     }
 
 
-    public Collection<Cart> postCart() {
+    public Iterable<Cart> postCart() {
         long user_id = 1;
         int sum = 0;
         int balance = balanceService.getBalance(user_id);
-        Collection<Pet> pets = petService.pets();
+        Iterable<Pet> pets = petService.pets();
         for (Cart cart : cartService.cart()) {
             if (cart.getUser_id() == user_id)
                 for (Pet pet : pets) {
-                    if (cart.getItem_id() == pet.id) sum += pet.getPrice();
+                    if (cart.getItem_id() == pet.getId()) sum += pet.getPrice();
                 }
         }
         if ((sum <= balance)) {

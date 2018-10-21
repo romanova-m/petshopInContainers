@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Controller
 public class StuffController {
@@ -15,20 +16,20 @@ public class StuffController {
 
     @RequestMapping(value = "/stuff", method = RequestMethod.GET)
     @ResponseBody
-    public Collection<Stuff> stuff(){
+    public Iterable<Stuff> stuff(){
         return stuffService.stuff();
     }
 
     @RequestMapping(value = "/stuff/id{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Stuff stuff(@PathVariable long id){
+    public Optional<Stuff> stuff(@PathVariable long id){
         return stuffService.stuffById(id);
     }
 
     @RequestMapping(value = "/stuff/id{id}", method = RequestMethod.PUT)
     @ResponseBody
     public Stuff newStuff(@PathVariable long id, @RequestBody Stuff newStuff) {
-        return stuffService.add(newStuff, id);
+        return stuffService.add(newStuff);
     }
 
     @RequestMapping(value = "/stuff/id{id}", method = RequestMethod.DELETE)

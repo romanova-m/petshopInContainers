@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collection;
-
 @Controller
 public class BalanceController {
 
@@ -18,7 +16,7 @@ public class BalanceController {
 
     @RequestMapping(value = "balance", method = RequestMethod.GET)
     @ResponseBody
-    public Collection<Balance> balance(){
+    public Iterable<Balance> balance(){
         return balanceService.balance();
     }
 }

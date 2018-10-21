@@ -5,8 +5,7 @@ import mirea.pets.domain.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
+import java.util.Optional;
 
 @Controller
 public class PetController {
@@ -17,18 +16,18 @@ public class PetController {
 
     @RequestMapping(value = "/pet", method = RequestMethod.GET)
     @ResponseBody
-    public Collection<Pet> pets() { return petService.pets();}
+    public Iterable<Pet> pets() { return petService.pets();}
 
     @RequestMapping(value = "/pet/id{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Pet pet(@PathVariable long id) {
+    public Optional<Pet> pet(@PathVariable long id) {
         return petService.petById(id);
     }
 
-    @RequestMapping(value = "/pet/id{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/pet", method = RequestMethod.PUT)
     @ResponseBody
-    public Pet newPet(@PathVariable long id, @RequestBody Pet newPet) {
-        return petService.add(newPet, id);
+    public Pet newPet(@RequestBody Pet newPet) {
+        return petService.add(newPet);
     }
 
     @RequestMapping(value = "/pet/id{id}", method = RequestMethod.DELETE)

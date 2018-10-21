@@ -1,24 +1,47 @@
 package mirea.pets.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Currency {
 
-    public int id;
-    public int user_id;
-    public double conversion;
+    @Id
+    @GeneratedValue
+    private long id;
+    private long user_id;
+    private double conversion;
 
     public Currency(){
 
     }
-    public Currency(int id, int user_id, double conversion){
-        this.id = id;
+    public Currency(long user_id, double conversion){
         this.user_id = user_id;
         this.conversion = conversion;
     }
 
-    int getId(){
-        return this.id;
+    public double getConversion() {
+        return conversion;
     }
-    int getUser_id(){
-        return this.user_id;
+
+    public void setConversion(double conversion) {
+        this.conversion = conversion;
+    }
+
+    public long getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(long user_id) {
+        this.user_id = user_id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

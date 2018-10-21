@@ -1,32 +1,38 @@
 package mirea.pets.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Balance {
-    private int id;
-    private int user_id;
+    @Id
+    @GeneratedValue
+    private long id;
+    private long user_id;
     private int val;
 
     public Balance() {
     }
 
-    public Balance(int id, int user_id, int val) {
-        this.id = id;
+    public Balance(long user_id, int val) {
         this.user_id = user_id;
         this.val = val;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getUser_id() {
+    public long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
 
