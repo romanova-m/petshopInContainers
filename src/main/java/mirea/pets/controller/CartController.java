@@ -1,8 +1,6 @@
 package mirea.pets.controller;
 
-import mirea.pets.service.BalanceService;
 import mirea.pets.service.CartService;
-import mirea.pets.service.PetService;
 import mirea.pets.domain.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
