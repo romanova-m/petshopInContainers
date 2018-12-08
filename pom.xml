@@ -6,7 +6,13 @@
     <groupId>mirea</groupId>
     <artifactId>pets</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>cart</module>
+        <module>items</module>
+        <module>currency</module>
+        <module>balance</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>pets</name>
     <description>Pet shop</description>
