@@ -78,7 +78,7 @@ public class CartService {
         return 0;
     }
 
-    public int getBalanceById(long user_id) {
+    public int getBalanceVal(long user_id) {
         int id = getBalanceId(user_id);
         ResponseEntity<Map> responseEntity = restTemplate.getForEntity("http://localhost:8080/balance/" + id,
                 Map.class);
@@ -87,7 +87,7 @@ public class CartService {
 
     public Iterable<Cart> postCart() {
         long user_id = 1;
-        int balance = getBalanceById(user_id); //
+        int balance = getBalanceVal(user_id); //
         int sum = getSum(user_id);
         double conversion = getCurrencyById(user_id);
         //ok
