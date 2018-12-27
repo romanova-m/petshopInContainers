@@ -31,7 +31,7 @@ public class CartController {
         return cartService.add(newCart);
     }
 
-    @RequestMapping(value = "/cart/id{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/cart/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delCart(@PathVariable long id) {
         cartService.del(id);

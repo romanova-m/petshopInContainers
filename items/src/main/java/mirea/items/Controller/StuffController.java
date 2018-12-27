@@ -19,7 +19,7 @@ public class StuffController {
         return stuffService.stuff();
     }
 
-    @RequestMapping(value = "/stuff/id{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/stuff/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Optional<Stuff> stuff(@PathVariable long id){
         return stuffService.stuffById(id);
@@ -31,7 +31,7 @@ public class StuffController {
         return stuffService.add(newStuff);
     }
 
-    @RequestMapping(value = "/stuff/id{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/stuff/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delStuff(@PathVariable long id) {
         stuffService.del(id);

@@ -28,9 +28,10 @@ public class BalanceController {
 
     @RequestMapping(value = "/balance", method = RequestMethod.PUT)
     @ResponseBody
-    public long updateBal(@RequestBody Balance newBalance) {
+    public long putBal(@RequestBody Balance newBalance) {
         return balanceService.updateBalance(newBalance);
     }
+
     @RequestMapping(value = "/balance/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public long deleteBal(@PathVariable long id) {

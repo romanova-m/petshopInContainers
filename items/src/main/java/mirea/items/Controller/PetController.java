@@ -18,7 +18,7 @@ public class PetController {
     @ResponseBody
     public Iterable<Pet> pets() { return petService.pets();}
 
-    @RequestMapping(value = "/pet/id{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pet/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Optional<Pet> pet(@PathVariable long id) {
         return petService.petById(id);
@@ -30,7 +30,7 @@ public class PetController {
         return petService.add(newPet);
     }
 
-    @RequestMapping(value = "/pet/id{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/pet/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delPet(@PathVariable long id) {
         petService.del(id);

@@ -7,12 +7,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Component
 public class BalanceService {
     @Autowired
     BalanceRepository balanceRepository;
-
+    Logger LOGGER = Logger.getLogger(BalanceService.class.getName());
     @PostConstruct
     public void init() {
         balanceRepository.save(new Balance(1, 100));
@@ -37,11 +38,13 @@ public class BalanceService {
 
     public long updateBalance(Balance balance) {
         balanceRepository.save(balance);
+        LOGGER.info("Balance service: new value ");
         return getBalance(balance.getUser_id());
     }
 
     public long deleteBalance(long id) {
         balanceRepository.deleteById(id);
+        LOGGER.info("Balance service: removed " + id);
         return id;
     }
 

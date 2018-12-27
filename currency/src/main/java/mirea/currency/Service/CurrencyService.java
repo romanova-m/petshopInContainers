@@ -15,7 +15,7 @@ public class CurrencyService {
 
     @PostConstruct
     public void init(){
-        currencyRepository.save(new Currency(1, 1.5));
+        currencyRepository.save(new Currency(1, 2));
     }
 
     public Iterable<Currency> currencies(){

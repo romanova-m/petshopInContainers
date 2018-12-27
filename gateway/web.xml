@@ -1,0 +1,12 @@
+<filter>
+    <filter-name>Router</filter-name>
+    <filter-class>org.example.Router</filter-class>
+    <init-param>
+        <param-name>param1</param-name>
+        <param-value>valueOfparam1</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+<filter-name>Router</filter-name>
+<url-pattern>/*</url-pattern>
+</filter-mapping>
