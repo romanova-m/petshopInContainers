@@ -2,24 +2,24 @@ package mirea.cart.Service;
 
 import mirea.cart.Domain.Cart;
 import mirea.cart.Repository.CartRepository;
+import mirea.logger.CustomLogger;
+import mirea.logger.HeaderInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.*;
 
 @Controller
 public class CartService {
 
-    private static final Logger LOGGER = Logger.getLogger(CartService.class.getName());
     public final String CONFIG_URL = "http://localhost:8083";
+    private final String SERVICE_ADMIN_TOKEN = "Bearer MSBhZG1pbg==." +
+            "ZTdkYjU5YjI0YmZhYjM2ZmY2MzQ2M2FhZGI0OTViZWQyNjk5OTQyNWRlOGE4NzUyOGIwYWRjMGIzZTNiMmQ3OA==";
+
     private Map urls;
     private CartRepository cartRepository;
 
@@ -32,6 +32,12 @@ public class CartService {
 
     @PostConstruct
     public void init() {
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+        interceptors.add(new HeaderInterceptor("Authorization", SERVICE_ADMIN_TOKEN));
+        interceptors.add(new CustomLogger());
+
+        restTemplate.setInterceptors(interceptors);
+
         urls = restTemplate.getForEntity(CONFIG_URL + "/config",
                 Map.class).getBody();
         cartRepository.save(new Cart(1, 1));
@@ -39,8 +45,15 @@ public class CartService {
         cartRepository.save(new Cart(1, 2));
     }
 
-    public Iterable<Cart> cart() {
-        return cartRepository.findAll();
+    public Iterable<Cart> cart(long user_id) { return cartByUser(user_id);}
+
+    Iterable<Cart> cartByUser(long user_id){
+        Iterable<Cart> carts = cartRepository.findAll();
+        Iterable<Cart> result = new ArrayList<Cart>();
+        for (Cart cart: carts) {
+            if (cart.getUser_id() == user_id) ((ArrayList<Cart>) result).add(cart);
+        }
+        return result;
     }
 
     public void rmAll(long user_id) {
@@ -62,11 +75,8 @@ public class CartService {
         cartRepository.deleteById(id);
     }
 
-    public Optional<Cart> cartById(long id) {
-        return cartRepository.findById(id);
-    }
-
-    public Cart add(Cart cart) {
+    public Cart add(Cart cart, long user_id) {
+        cart.setUser_id(user_id);
         cartRepository.save(cart);
         return cart;
     }
@@ -74,7 +84,6 @@ public class CartService {
     public int getBalanceId(long user_id) {
         ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity(
                 "http://localhost:" + urls.get("balance") + "/balance", Map[].class);
-        LOGGER.info("CartService: getting balance for user " + user_id);
         for (Map map : responseEntity.getBody()) {
             if (map.get("user_id").toString().equals(Long.toString(user_id)))
                 return Integer.parseInt(map.get("id").toString());
@@ -90,22 +99,18 @@ public class CartService {
         return responseEntity.getBody() == null? 0 :Integer.parseInt(responseEntity.getBody().get("val").toString());
     }
 
-    public Iterable<Cart> postCart() {
-        LOGGER.info("CartService: starting POST cart...");
-        long user_id = 1;
+    public Iterable<Cart> postCart(long user_id) {
         int balance = getBalanceVal(user_id); //
         int sum = getSum(user_id);
         double conversion = getCurrencyById(user_id);
         //
         if (sum != 0){
-        if ((sum <= (balance*conversion))) {
-            setBalance(user_id, (int) (((balance*conversion) - sum)/conversion));
-            rmAll(user_id);
-            LOGGER.info("CartService: cart successfully posted for user " + user_id);
+            if ((sum <= (balance*conversion))) {
+                setBalance(user_id, (int) (((balance*conversion) - sum)/conversion));
+                rmAll(user_id);
+            }
         }
-        else LOGGER.info("CartService: not enough balance for user " + user_id);}
-        else LOGGER.info("No items in cart");
-        return cart();
+        return cart(user_id);
     }
 
     private int getSum(long user_id) {
@@ -113,10 +118,8 @@ public class CartService {
         ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity(
                 "http://localhost:" + urls.get("pet") + "/pet/",
                 Map[].class);
-        LOGGER.info("CartService: getting order price for user " + user_id);
 
-        for (Cart cart : cart()) {
-            if (cart.getUser_id() == user_id)
+        for (Cart cart : cart(user_id)) {
                 for (Map map : responseEntity.getBody()) {
                     if (Long.toString(cart.getItem_id()).equals(map.get("id").toString()))
                         sum += Integer.parseInt(map.get("price").toString());
@@ -130,15 +133,8 @@ public class CartService {
         ResponseEntity<Map> responseEntity = restTemplate.getForEntity(
                 "http://localhost:" + urls.get("balance") + "/balance/" + id,
                 Map.class);
-        LOGGER.info("CartService: user(" + user_id + ") updating balance from " +
-                responseEntity.getBody().get("val") + " to " + value);
 
-        //responseEntity.getBody().remove("val");
         responseEntity.getBody().put("val", value);
-
-
-        LOGGER.info("CartService: update " + "http://localhost:" + urls.get("balance") + "/balance/" + id);
-        //restTemplate.delete("http://localhost:" + urls.get("balance") + "/balance/" + id);
         restTemplate.put("http://localhost:" + urls.get("balance") + "/balance/", responseEntity);
 
     }
@@ -146,7 +142,6 @@ public class CartService {
     public double getCurrencyById(long user_id) {
         ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity( "http://localhost:" + urls.get("currency") + "/currency/",
                 Map[].class);
-        LOGGER.info("CartService: getting currency for user " + user_id);
         for (Map map : responseEntity.getBody()) {
             if (map.get("user_id").toString().equals(Long.toString(user_id)))
                 return Double.parseDouble(map.get("conversion").toString());

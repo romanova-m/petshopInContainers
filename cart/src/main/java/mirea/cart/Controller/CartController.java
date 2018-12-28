@@ -15,20 +15,20 @@ public class CartController {
 
     @RequestMapping(value = "/cart", method = RequestMethod.GET)
     @ResponseBody
-    public Iterable<Cart> cart() {
-        return cartService.cart();
+    public Iterable<Cart> cart(@RequestAttribute("userId") int userId) {
+        return cartService.cart(userId);
     }
 
     @RequestMapping(value = "/cart", method = RequestMethod.POST)
     @ResponseBody
-    public Iterable<Cart> postCart() {
-        return cartService.postCart();
+    public Iterable<Cart> postCart(@RequestAttribute("userId") int userId) {
+        return cartService.postCart(userId);
     }
 
     @RequestMapping(value = "/cart", method = RequestMethod.PUT)
     @ResponseBody
-    public Cart newCart(@RequestBody Cart newCart) {
-        return cartService.add(newCart);
+    public Cart newCart(@RequestBody Cart newCart, @RequestAttribute("userId") int userId) {
+        return cartService.add(newCart, userId);
     }
 
     @RequestMapping(value = "/cart/{id}", method = RequestMethod.DELETE)

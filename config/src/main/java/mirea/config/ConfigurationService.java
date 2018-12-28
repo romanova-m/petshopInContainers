@@ -14,6 +14,7 @@ public class ConfigurationService {
         @PostConstruct
         public void init() {
             configs.put("auth", "8080");
+            configs.put("users", "8080");
             configs.put("balance", "8081");
             configs.put("cart", "8082");
             configs.put("config", "8083");

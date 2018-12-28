@@ -17,6 +17,7 @@ public class BalanceService {
     @PostConstruct
     public void init() {
         balanceRepository.save(new Balance(1, 100));
+        balanceRepository.save(new Balance(2, 200));
     }
 
     public Iterable<Balance> balance() {

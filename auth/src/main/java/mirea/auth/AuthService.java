@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class AuthService {
@@ -24,6 +22,7 @@ public class AuthService {
     private void init()
     {
         authRepo.save(new User("admin","password","admin"));
+        authRepo.save(new User("user","password","user"));
     }
 
     public String getToken(User auth)
@@ -46,5 +45,9 @@ public class AuthService {
             if (user.getLogin().equals(login)) return user;
         }
         return null;
+    }
+
+    public Iterable<User> getUsers() {
+        return authRepo.findAll();
     }
 }

@@ -17,4 +17,10 @@ public class AuthController {
     public String getToken(@RequestBody User user){
         return authService.getToken(user);
     }
+
+    @RequestMapping(value ="users", method = RequestMethod.GET)
+    @ResponseBody
+    public Iterable<User> getUsers(){
+        return authService.getUsers();
+    }
 }
