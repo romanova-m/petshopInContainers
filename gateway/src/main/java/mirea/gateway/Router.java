@@ -12,17 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @WebFilter(urlPatterns = {"*"})
 public class Router implements javax.servlet.Filter {
 
-    private static final Logger LOGGER = Logger.getLogger(Router.class.getName());
     private static final String CONFIG_PORT = "8083";
     private static final Pattern REWRITE_PATTERN = Pattern.compile("(^\\w*[/]*\\d*)$");
     private RestTemplate restTemplate = new RestTemplate();
@@ -52,9 +49,6 @@ public class Router implements javax.servlet.Filter {
         String service = parts[3];
         String number = null;
         if (parts.length > 4) number = parts[4];
-
-
-
         Matcher m = REWRITE_PATTERN.matcher(service);
         if(m.find()) {
             HttpServletResponse httpResponse = (HttpServletResponse) res;
@@ -69,15 +63,13 @@ public class Router implements javax.servlet.Filter {
     }
 
     private void processPostMethod(String url, ServletRequest req) {
-        restTemplate.setInterceptors(Collections.singletonList(new CustomLogger()));
-        restTemplate.postForObject(url,req, Map[].class);
+        restTemplate.postForObject(url,null, String.class);
     }
 
     private String getURL(String word, String number) {
         String url = "http://localhost:" + restTemplate.getForObject(
                 "http://localhost:" + CONFIG_PORT + "/config", Map.class).get(word) + "/" + word;
         if (number != null) url += "/" + number;
-        LOGGER.info("Router: redirect URL (" + word + "):" + url);
         return url;
     }
 
