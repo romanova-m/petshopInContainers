@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.logging.Logger;
 
-public class RoleFilter implements Filter{
+public class RoleFilter implements Filter {
     private final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
     private final String SPLIT_PATTERN = "(\\.)";
     private final String USER_METHODS[] = {"GET"}; // All other methods will be filtered
@@ -36,8 +36,7 @@ public class RoleFilter implements Filter{
                 LOGGER.info("REQUIRED ADMIN RIGHTS");
                 throw new ServletException("Permission denied");
             }
-        }
-        else filterChain.doFilter(servletRequest, servletResponse);
+        } else filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private boolean isUserMethod(String method) {
@@ -49,15 +48,13 @@ public class RoleFilter implements Filter{
 
     }
 
-    private String role(String token)
-    {
+    private String role(String token) {
         String arr[] = token.split(SPLIT_PATTERN);
         byte[] decodedBytes = Base64.getDecoder().decode(arr[0]);
         return new String(decodedBytes).split(" ")[1];
     }
 
-    private boolean isAdmin (String token)
-    {
+    private boolean isAdmin(String token) {
         return "admin".equals(role(token));
     }
 }

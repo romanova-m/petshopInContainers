@@ -1,4 +1,5 @@
 package mirea.logger;
+
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -8,7 +9,6 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
-
 
 public class CustomLogger implements ClientHttpRequestInterceptor {
 

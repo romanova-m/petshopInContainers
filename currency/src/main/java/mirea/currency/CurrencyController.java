@@ -1,4 +1,4 @@
-package mirea.config;
+package mirea.currency;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -6,16 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
-
 @Controller
-public class ConfigurationController {
+public class CurrencyController {
     @Autowired
-    private ConfigurationService service;
+    private CurrencyService currencyService;
 
-    @RequestMapping(value ="config", method = RequestMethod.GET)
+    @RequestMapping(value = "currency", method = RequestMethod.GET)
+
     @ResponseBody
-    public Map<String, String> getLinks(){
-        return service.getAll();
+    public Iterable<Currency> currency(){
+        return currencyService.currencies();
     }
 }
