@@ -1,4 +1,4 @@
-package mirea.config;
+package ru.mirea.config;
 
 import org.springframework.stereotype.Service;
 
