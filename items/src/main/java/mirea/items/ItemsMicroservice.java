@@ -6,8 +6,8 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
 @ServletComponentScan
-public class Main {
+public class ItemsMicroservice {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class);
+        SpringApplication.run(ItemsMicroservice.class);
     }
 }

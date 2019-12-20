@@ -1,11 +1,11 @@
 package mirea.cart;
 
-import mirea.logger.CustomLogger;
-import mirea.logger.HeaderInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -16,11 +16,11 @@ import java.util.Map;
 @Controller
 public class CartService {
 
-    public final String CONFIG_URL = "http://localhost:8083";
+    public final String CONFIG_URL = "http://config:8083";
     private final String SERVICE_ADMIN_TOKEN = "Bearer MSBhZG1pbg==." +
             "ZTdkYjU5YjI0YmZhYjM2ZmY2MzQ2M2FhZGI0OTViZWQyNjk5OTQyNWRlOGE4NzUyOGIwYWRjMGIzZTNiMmQ3OA==";
 
-    private Map urls;
+    @Nullable private Map urls;
     private CartRepository cartRepository;
 
     @Autowired
@@ -32,22 +32,33 @@ public class CartService {
 
     @PostConstruct
     public void init() {
+        cartRepository.save(new Cart(1, 1));
+        cartRepository.save(new Cart(2, 1));
+        cartRepository.save(new Cart(1, 2));
+        urls = getUrlsAttempt();
+    }
+
+    private Map getUrlsAttempt() {
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
-        interceptors.add(new HeaderInterceptor("Authorization", SERVICE_ADMIN_TOKEN));
         interceptors.add(new CustomLogger());
 
         restTemplate.setInterceptors(interceptors);
 
-        urls = restTemplate.getForEntity(CONFIG_URL + "/config",
-                Map.class).getBody();
-        cartRepository.save(new Cart(1, 1));
-        cartRepository.save(new Cart(2, 1));
-        cartRepository.save(new Cart(1, 2));
+        try {
+            return restTemplate.getForEntity(CONFIG_URL + "/config",
+                    Map.class).getBody();
+        }
+        catch (RestClientException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
 
     public Iterable<Cart> cart(long user_id) { return cartByUser(user_id);}
 
     Iterable<Cart> cartByUser(long user_id){
+        if (urls == null) urls = getUrlsAttempt();
         Iterable<Cart> carts = cartRepository.findAll();
         Iterable<Cart> result = new ArrayList<Cart>();
         for (Cart cart: carts) {
@@ -82,8 +93,9 @@ public class CartService {
     }
 
     public int getBalanceId(long user_id) {
+        if (urls == null) urls = getUrlsAttempt();
         ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity(
-                "http://localhost:" + urls.get("balance") + "/balance", Map[].class);
+                "http://balance:" + urls.get("balance") + "/balance", Map[].class);
         for (Map map : responseEntity.getBody()) {
             if (map.get("user_id").toString().equals(Long.toString(user_id)))
                 return Integer.parseInt(map.get("id").toString());
@@ -94,12 +106,16 @@ public class CartService {
     public int getBalanceVal(long user_id) {
         int id = getBalanceId(user_id);
         ResponseEntity<Map> responseEntity = restTemplate.getForEntity(
-                "http://localhost:" + urls.get("balance") + "/balance/" + id,
+                "http://balance:" + urls.get("balance") + "/balance/" + id,
                 Map.class);
         return responseEntity.getBody() == null? 0 :Integer.parseInt(responseEntity.getBody().get("val").toString());
     }
 
-    public Iterable<Cart> postCart(long user_id) {
+    public Iterable<Cart> postCart(long user_id) throws Exception {
+        if (urls == null) {
+            urls = getUrlsAttempt();
+            if (urls == null) throw new Exception("urls not available");
+        }
         int balance = getBalanceVal(user_id); //
         int sum = getSum(user_id);
         double conversion = getCurrencyById(user_id);
@@ -116,7 +132,7 @@ public class CartService {
     private int getSum(long user_id) {
         int sum = 0;
         ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity(
-                "http://localhost:" + urls.get("pet") + "/pet/",
+                "http://items:" + urls.get("pet") + "/pet/",
                 Map[].class);
 
         for (Cart cart : cart(user_id)) {
@@ -131,16 +147,16 @@ public class CartService {
     private void setBalance(long user_id, int value) {
         int id = getBalanceId(user_id);
         ResponseEntity<Map> responseEntity = restTemplate.getForEntity(
-                "http://localhost:" + urls.get("balance") + "/balance/" + id,
+                "http://balance:" + urls.get("balance") + "/balance/" + id,
                 Map.class);
 
         responseEntity.getBody().put("val", value);
-        restTemplate.put("http://localhost:" + urls.get("balance") + "/balance/", responseEntity);
+        restTemplate.put("http://balance:" + urls.get("balance") + "/balance/", responseEntity);
 
     }
 
     public double getCurrencyById(long user_id) {
-        ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity( "http://localhost:" + urls.get("currency") + "/currency/",
+        ResponseEntity<Map[]> responseEntity = restTemplate.getForEntity( "http://currency:" + urls.get("currency") + "/currency/",
                 Map[].class);
         for (Map map : responseEntity.getBody()) {
             if (map.get("user_id").toString().equals(Long.toString(user_id)))

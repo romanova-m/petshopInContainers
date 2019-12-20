@@ -19,7 +19,7 @@ public class CartController {
 
     @RequestMapping(value = "/cart", method = RequestMethod.POST)
     @ResponseBody
-    public Iterable<Cart> postCart(@RequestAttribute("userId") int userId) {
+    public Iterable<Cart> postCart(@RequestAttribute("userId") int userId) throws Exception {
         return cartService.postCart(userId);
     }
 

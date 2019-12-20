@@ -1,4 +1,4 @@
-package ru.mirea.config;
+package mirea.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

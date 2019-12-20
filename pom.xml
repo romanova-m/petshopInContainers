@@ -5,16 +5,13 @@
 
     <groupId>mirea</groupId>
     <artifactId>pets</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>cart</module>
         <module>items</module>
         <module>currency</module>
         <module>balance</module>
-        <module>auth</module>
-        <module>gateway</module>
         <module>config</module>
-        <module>logger</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -56,6 +53,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>2.2.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -66,10 +64,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>4.2.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
     </dependencies>
 

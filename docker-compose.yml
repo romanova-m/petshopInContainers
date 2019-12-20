@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  balance:
+    build:
+      context: ./balance
+    depends_on: [config]
+    image: balance:latest
+    ports:
+      - "8081:8081"
+  cart:
+    build:
+      context: ./cart
+    depends_on: [config, items, currency, balance]
+    image: cart:latest
+    ports:
+      - "8087:8087"
+  config:
+    build:
+      context: ./config
+    image: config:latest
+    ports:
+      - "8083:8083"
+  currency:
+    build:
+      context: ./currency
+    image: currency:latest
+    ports:
+      - "8084:8084"
+  items:
+    build:
+      context: ./items
+    image: items:latest
+    ports:
+      - "8086:8086"
+  nginx:
+    build:
+      context: .
+    image: nginx:latest
+    ports:
+      - "80:80"

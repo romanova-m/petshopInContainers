@@ -1,4 +1,4 @@
-package mirea.logger;
+package mirea.cart;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
